@@ -15,7 +15,7 @@ const (
 	// addEntryModel
 	// updateEntryModel
 	// listMachinesModel
-	// addMachineModel
+	addMachineForm
 	// updateMachineModel
 )
 
@@ -25,7 +25,7 @@ func main() {
 	menu := NewMenu()
 	menu.InitMenu(20, 10)
 
-	models = []tea.Model{menu}
+	models = []tea.Model{menu, NewMachineForm()}
 	m := models[menuModel]
 	p := tea.NewProgram(m)
 	if _, err := p.Run(); err != nil {

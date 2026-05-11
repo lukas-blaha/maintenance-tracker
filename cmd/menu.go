@@ -23,9 +23,9 @@ var selectedStyle = lipgloss.NewStyle().
 
 const (
 	listEntries item = iota
+	listMachines
 	addEntry
 	updateEntry
-	listMachines
 	addMachine
 	updateMachine
 )
@@ -75,10 +75,9 @@ func (m *MenuModel) InitMenu(width, height int) {
 	m.items = menuList
 
 	m.items.SetItems([]list.Item{
-		MenuItem{listEntries, "Show maintenance entries", ""},
+		MenuItem{listMachines, "Show saved entries", ""},
 		MenuItem{addEntry, "Add new maintenance entry", ""},
 		MenuItem{updateEntry, "Update existig entry", ""},
-		MenuItem{listMachines, "Show saved machines", ""},
 		MenuItem{addMachine, "Add new machine", ""},
 		MenuItem{updateMachine, "Edit machine data", ""},
 	})
@@ -127,6 +126,9 @@ func (m MenuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				// TODO: switch to list machines screen/model
 			case addMachine:
 				// TODO: switch to add machine screen/model
+				models[menuModel] = m
+				models[addMachineForm] = NewMachineForm()
+				return models[addMachineForm].Update(nil)
 			case updateMachine:
 				// TODO: switch to update machine screen/model
 			}
