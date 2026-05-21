@@ -8,14 +8,14 @@ import (
 
 const menuItemWidth = 40
 
-var normalStyle = lipgloss.NewStyle().
+var normalMenuStyle = lipgloss.NewStyle().
 	Width(menuItemWidth).
 	Bold(true).
 	Padding(0, 5).
 	Border(lipgloss.HiddenBorder()).
 	Foreground(lipgloss.Color("#808080"))
 
-var selectedStyle = lipgloss.NewStyle().
+var selectedMenuStyle = lipgloss.NewStyle().
 	Padding(1, 5).
 	Bold(true).
 	Border(lipgloss.RoundedBorder()).
@@ -49,6 +49,7 @@ func (i MenuItem) Description() string {
 }
 
 type MenuModel struct {
+	app      *App
 	focused  item
 	items    list.Model
 	err      error
@@ -58,15 +59,15 @@ type MenuModel struct {
 	height   int
 }
 
-func NewMenu() *MenuModel {
-	return &MenuModel{}
+func NewMenu(app *App) *MenuModel {
+	return &MenuModel{app: app}
 }
 
 func (m *MenuModel) InitMenu(width, height int) {
 	delegate := list.NewDefaultDelegate()
 	delegate.ShowDescription = false
-	delegate.Styles.SelectedTitle = selectedStyle
-	delegate.Styles.NormalTitle = normalStyle
+	delegate.Styles.SelectedTitle = selectedMenuStyle
+	delegate.Styles.NormalTitle = normalMenuStyle
 	menuList := list.New([]list.Item{}, delegate, width, height)
 	menuList.SetShowHelp(false)
 	menuList.SetShowTitle(false)
@@ -116,18 +117,19 @@ func (m MenuModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.focused = selected.item
 
 			switch selected.item {
-			case listEntries:
-				// TODO: switch to list entries screen/model
+			case listMachines:
+				models[menuModel] = m
+				machineList := NewMachinesList(m.app)
+				machineList.UpdateMachinesList(100, 20)
+				models[listMachinesModel] = machineList
+				return models[listMachinesModel].Update(nil)
 			case addEntry:
 				// TODO: switch to add entry screen/model
 			case updateEntry:
 				// TODO: switch to update entry screen/model
-			case listMachines:
-				// TODO: switch to list machines screen/model
 			case addMachine:
-				// TODO: switch to add machine screen/model
 				models[menuModel] = m
-				models[addMachineForm] = NewMachineForm()
+				models[addMachineForm] = NewMachineForm(m.app)
 				return models[addMachineForm].Update(nil)
 			case updateMachine:
 				// TODO: switch to update machine screen/model
